@@ -4,9 +4,6 @@
  * Installed resoruce for stock information using Yahoo API with YQL
  */
 
-// Make sure all installed resources use this namespace to avoid collisions
-namespace tdt\installed;
-
 class Stock{
 
     /**
@@ -40,10 +37,32 @@ class Stock{
      */
     public function getData(){
 
+        // Register new browser
         $browser = new Buzz\Browser();
-        $response = $browser->get('http://www.google.com');
 
-        return $response;
+        // Get response
+        $response = $browser->get("http://finance.yahoo.com/d/quotes.csv?s=" . $this->symbol . "&f=snl1c6p2ohgpv");
+
+        $data = explode("\n", $response->getContent());
+
+        $stocks = array();
+
+        // Parse CVS results
+        foreach($data as $line){
+            $line = trim($line);
+            if(strlen($line) > 0 && substr_count($line, ',') == 9){
+                $quote = array();
+                list($quote['symbol'], $quote['name'], $quote['value'], $quote['change'], $quote['change_percent'], $quote['open'], $quote['high'], $quote['low'], $quote['previous_close'], $quote['volume']) = explode(",", $line);
+
+                foreach ($quote as $key => $value) {
+                    $quote[$key] = trim(preg_replace("/\"/m", "", $value));
+                }
+
+                array_push($stocks, $quote);
+            }
+        }
+
+        return $stocks;
     }
 
     /**
