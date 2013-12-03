@@ -8,6 +8,10 @@ class Stock{
 
     /**
      * The set of REST parameters that this resource requires.
+     * Note that
+     *      required parameters are passed as part of the URI, not as a query string parameter.
+     *      you have access to all of the standard Laravel 4 classes and components (e.g. Request,...)
+     *
      */
     public static function getParameters(){
         return array(
@@ -63,13 +67,6 @@ class Stock{
         }
 
         return $stocks;
-    }
-
-    /**
-     * Return some documentation for this resource
-     */
-    public static function getDocumentation(){
-        return "Retrieve stock information from given stock symbol(s).";
     }
 
 }
